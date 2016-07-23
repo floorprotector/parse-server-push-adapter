@@ -18,7 +18,7 @@ function GCM(args) {
   } else if ((typeof args === 'undefined' ? 'undefined' : _typeof(args)) === 'object') {
     gcmsArgsList.push(args);
   } else {
-    throw new _parse2.default.Error(_parse2.default.Error.PUSH_MISCONFIGURED, 'GMCS Configuration is invalid');
+    throw new Parse.Error(Parse.Error.PUSH_MISCONFIGURED, 'GMCS Configuration is invalid');
   }
 
   this.senders = [];
@@ -26,14 +26,15 @@ function GCM(args) {
   for (var index = 0; index < gcmsArgsList.length; index++) {
     var gcmsArgs = gcmsArgsList[index];
     if (!gcmsArgs.apiKey) {
-      throw new _parse2.default.Error(_parse2.default.Error.PUSH_MISCONFIGURED, 'apiKey is missing for %j', gcmsArgs);
+      throw new Parse.Error(Parse.Error.PUSH_MISCONFIGURED, 'apiKey is missing for %j', gcmsArgs);
     }
 
-    var sender = new _nodeGcm2.default.Sender(gcmsArgs.apiKey);
+    var sender = new gcm.Sender(gcmsArgs.apiKey);
     if (gcmsArgs.appIdentifier != undefined) {
       sender.appIdentifier = gcmsArgs.appIdentifier;
     }
     this.senders.push(sender);
+  }
 }
 
 /**
