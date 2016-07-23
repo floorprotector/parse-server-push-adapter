@@ -3,9 +3,9 @@
 import Parse from 'parse';
 import log from 'npmlog';
 import gcm from 'node-gcm';
-import { randomString } from './PushAdapterUtils';
+import { utils } from 'parse-server-push-adapter';
 
-const LOG_PREFIX = 'parse-server-push-adapter GCM';
+const LOG_PREFIX = 'parse-server-fp-push-adapter GCM';
 const GCMTimeToLiveMax = 4 * 7 * 24 * 60 * 60; // GCM allows a max of 4 weeks
 const GCMRegistrationTokensMax = 1000;
 
@@ -44,7 +44,7 @@ function GCM(args) {
  * @returns {Object} A promise which is resolved after we get results from gcm
  */
 GCM.prototype.send = function(data, devices) {
-  let pushId = randomString(10);
+  let pushId = utils.randomString(10);
   // Make a new array
   devices = new Array(...devices);
   let timestamp = Date.now();
