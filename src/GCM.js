@@ -10,11 +10,30 @@ const GCMTimeToLiveMax = 4 * 7 * 24 * 60 * 60; // GCM allows a max of 4 weeks
 const GCMRegistrationTokensMax = 1000;
 
 function GCM(args) {
-  if (typeof args !== 'object' || !args.apiKey) {
-    throw new Parse.Error(Parse.Error.PUSH_MISCONFIGURED,
-                          'GCM Configuration is invalid');
+  // For gcm, there maybe multiple senderID/key pairs,
+  // typePushConfig can be an array.
+  var gcmsArgsList = [];
+  if (Array.isArray(args)) {
+    gcmsArgsList = gcmsArgsList.concat(args);
+  } else if ((typeof args === 'undefined' ? 'undefined' : _typeof(args)) === 'object') {
+    gcmsArgsList.push(args);
+  } else {
+    throw new _parse2.default.Error(_parse2.default.Error.PUSH_MISCONFIGURED, 'GMCS Configuration is invalid');
   }
-  this.sender = new gcm.Sender(args.apiKey);
+
+  this.senders = [];
+
+  for (var index = 0; index < gcmsArgsList.length; index++) {
+    var gcmsArgs = gcmsArgsList[index];
+    if (!gcmsArgs.apiKey) {
+      throw new _parse2.default.Error(_parse2.default.Error.PUSH_MISCONFIGURED, 'apiKey is missing for %j', gcmsArgs);
+    }
+
+    var sender = new _nodeGcm2.default.Sender(gcmsArgs.apiKey);
+    if (gcmsArgs.appIdentifier != undefined) {
+      sender.appIdentifier = gcmsArgs.appIdentifier;
+    }
+    this.senders.push(sender);
 }
 
 /**
@@ -73,7 +92,20 @@ GCM.prototype.send = function(data, devices) {
   let registrationTokens = deviceTokens;
   let length = registrationTokens.length;
   log.verbose(LOG_PREFIX, `sending to ${length} ${length > 1 ? 'devices' : 'device'}`);
-  this.sender.send(message, { registrationTokens: registrationTokens }, 5, (error, response) => {
+
+  // Choose sender with matching appIdentifier of first device in list:
+  var sender = this.senders[0];
+  if (this.senders.length > 1 && devices.length > 0) {
+    var firstDevice = devices[0];
+    for (var i = 0; i < this.senders.length; i++) {
+      if (this.senders[i].appIdentifier && firstDevice.appIdentifier && firstDevice.appIdentifier === this.senders[i].appIdentifier) {
+        sender = this.senders[i];
+        break;
+      }
+    }
+  }
+
+  sender.send(message, { registrationTokens: registrationTokens }, 5, (error, response) => {
     // example response:
     /*
     {  "multicast_id":7680139367771848000,
