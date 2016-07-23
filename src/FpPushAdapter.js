@@ -1,13 +1,22 @@
 'use strict';
-import Parse from 'parse';
+// ParsePushAdapter is the default implementation of
+// PushAdapter, it uses GCM for android push and APNS
+// for ios push.
+
+import { utils } from 'parse-server-push-adapter';
+import ParsePushAdapter from 'parse-server-push-adapter';
+
+const Parse = require('parse/node').Parse;
+
+
+
 import log from 'npmlog';
 import APNS from './APNS';
 import GCM from './GCM';
-import { classifyInstallations } from './PushAdapterUtils';
 
-const LOG_PREFIX = 'parse-server-push-adapter';
+const LOG_PREFIX = 'parse-server-fp-push-adapter';
 
-export class ParsePushAdapter {
+export class FpPushAdapter {
 
   supportsPushTracking = true;
 
@@ -36,16 +45,17 @@ export class ParsePushAdapter {
     }
   }
 
+  static classifyInstallations(installations, validTypes) {
+    return utils.classifyInstallations(installations, validTypes)
+  }
+  
   getValidPushTypes() {
     return this.validPushTypes;
   }
 
-  static classifyInstallations(installations, validTypes) {
-    return classifyInstallations(installations, validTypes)
-  }
 
   send(data, installations) {
-    let deviceMap = classifyInstallations(installations, this.validPushTypes);
+    let deviceMap = utils.classifyInstallations(installations, this.validPushTypes);
     let sendPromises = [];
     for (let pushType in deviceMap) {
       let sender = this.senderMap[pushType];
@@ -73,5 +83,4 @@ export class ParsePushAdapter {
     })
   }
 }
-export default ParsePushAdapter;
-module.exports = ParsePushAdapter;
+export default FpPushAdapter;
