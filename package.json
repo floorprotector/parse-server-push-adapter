@@ -1,5 +1,5 @@
 {
-  "name": "@floorprotector/parse-server-fp-push-adapter",
+  "name": "parse-server-fp-push-adapter",
   "version": "1.0.5",
   "description": "fp parse-server-push-adapter",
   "main": "lib/index.js",

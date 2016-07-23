@@ -1,10 +1,6 @@
 # parse-server-fp-push-adapter
 
-[![Build Status](https://travis-ci.org/parse-server-modules/parse-server-onesignal-push-adapter.svg?branch=master)](https://travis-ci.org/parse-server-modules/parse-server-onesignal-push-adapter)
-[![codecov.io](https://codecov.io/github/parse-server-modules/parse-server-onesignal-push-adapter/coverage.svg?branch=master)](https://codecov.io/github/parse-server-modules/parse-server-onesignal-push-adapter?branch=master)
-
-
-Custom floorprotector Push adapter for parse-server
+Custom floorprotector push adapter for parse-server
 
 This push adapter is based on the official push adapter for parse-server - see [parse-server push configuration](https://github.com/ParsePlatform/parse-server/wiki/Push)
 
@@ -29,7 +25,7 @@ Add dependency to your parse-server package.json:
     "express": "~4.11.x",
     "kerberos": "~0.0.x",
     "parse": "~1.8.0",
-    "parse-server-fp-push-adapter": "@floorprotector/parse-server-fp-push-adapter",
+    "parse-server-fp-push-adapter": "~1.0.5",
     "parse-server": "~2.2.12"
   }
   ...
